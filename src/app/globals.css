@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;       /* Pure White #FFFFFF (90%) */
+    --foreground: 0 0% 7%;         /* Near-Black #111111 (10%) */
+    --card: 0 0% 100%;             /* Pure White #FFFFFF */
+    --card-foreground: 0 0% 7%;    /* Near-Black #111111 */
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 0 0% 7%;            /* Near-Black #111111 */
+    --primary-foreground: 0 0% 100%; /* Pure White #FFFFFF */
+    --secondary: 0 0% 96%;         /* Light Gray #F5F5F5 */
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 97%;            /* Subtle Gray #F7F7F7 */
+    --muted-foreground: 0 0% 40%;  /* Neutral Medium Gray #666666 */
+    --accent: 0 0% 96%;            /* Light Gray #F5F5F5 */
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 0% 15%;       /* Neutral dark for alerts */
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;            /* Hairline Border #E5E5E5 */
+    --input: 0 0% 96%;             /* Clean Input #F5F5F5 */
+    --ring: 0 0% 7%;               /* Crisp Black Focus #111111 */
+    --radius: 0.625rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    background-color: #FFFFFF;
+    color: #111111;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Minimalist Clean Card Surface */
+.minimal-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Minimalist Clean Secondary Surface */
+.secondary-surface {
+  background-color: #F7F7F7;
+  border: 1px solid #EAEAEA;
+}
+
+/* Print Stylesheet for Reports */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+}
