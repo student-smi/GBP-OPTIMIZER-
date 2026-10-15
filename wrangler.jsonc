@@ -4,11 +4,12 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-10-15",
   "compatibility_flags": ["nodejs_compat"],
+  "account_id": "0dee9b9d6d72cc660d04950492ad993f",
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "gbp-optimizer-db",
-      "database_id": "00000000-0000-0000-0000-000000000000"
+      "database_id": "a07adb60-f863-4473-b423-fd0dc1ffcb7c"
     }
   ],
   "vars": {

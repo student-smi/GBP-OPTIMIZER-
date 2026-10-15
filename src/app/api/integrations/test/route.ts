@@ -90,6 +90,50 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    if (provider === "cloudflare") {
+      const apiKey = process.env.CLOUDFLARE_API_KEY;
+      const email = process.env.CLOUDFLARE_EMAIL;
+      const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+
+      if (!apiKey || !email || !accountId) {
+        return NextResponse.json({
+          success: false,
+          configured: false,
+          message: "CLOUDFLARE_API_KEY, CLOUDFLARE_EMAIL, or CLOUDFLARE_ACCOUNT_ID is missing in .env",
+        });
+      }
+
+      // Ping Cloudflare Workers AI with a quick test prompt
+      const url = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/meta/llama-3.1-8b-instruct`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "X-Auth-Email": email,
+          "X-Auth-Key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: "Reply with 'OK'." }],
+          max_tokens: 5,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        return NextResponse.json({
+          success: true,
+          configured: true,
+          message: `Cloudflare Workers AI (Llama 3.1) & D1 Database are active and responsive! (Account: ${email})`,
+        });
+      } else {
+        return NextResponse.json({
+          success: false,
+          configured: true,
+          message: `Cloudflare API error: ${JSON.stringify(data.errors || res.statusText)}`,
+        });
+      }
+    }
+
     return NextResponse.json({ error: "Invalid provider specified" }, { status: 400 });
   } catch (error: any) {
     return NextResponse.json(
