@@ -197,5 +197,22 @@ export async function initDatabase() {
     );
 
     CREATE INDEX IF NOT EXISTS integrations_ws_provider_idx ON integrations(workspace_id, provider);
+
+    CREATE TABLE IF NOT EXISTS geo_grid_scans (
+      id TEXT PRIMARY KEY,
+      business_id TEXT NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+      workspace_id TEXT NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      keyword TEXT NOT NULL,
+      grid_size TEXT NOT NULL DEFAULT '3x3',
+      radius_km INTEGER NOT NULL DEFAULT 5,
+      average_rank INTEGER NOT NULL,
+      top_3_percentage INTEGER NOT NULL,
+      share_of_local_voice INTEGER NOT NULL,
+      pins_data TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS geo_grid_scans_biz_idx ON geo_grid_scans(business_id);
+    CREATE INDEX IF NOT EXISTS geo_grid_scans_ws_idx ON geo_grid_scans(workspace_id);
   `);
 }

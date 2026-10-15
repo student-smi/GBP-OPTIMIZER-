@@ -258,3 +258,29 @@ export const integrations = sqliteTable(
     workspaceProviderIdx: index("integrations_ws_provider_idx").on(table.workspaceId, table.provider),
   })
 );
+
+export const geoGridScans = sqliteTable(
+  "geo_grid_scans",
+  {
+    id: text("id").primaryKey(),
+    businessId: text("business_id")
+      .notNull()
+      .references(() => businesses.id, { onDelete: "cascade" }),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    keyword: text("keyword").notNull(),
+    gridSize: text("grid_size").notNull().default("3x3"),
+    radiusKm: integer("radius_km").notNull().default(5),
+    averageRank: integer("average_rank").notNull(), // stored as integer * 10 (e.g. 24 for 2.4)
+    top3Percentage: integer("top_3_percentage").notNull(),
+    shareOfLocalVoice: integer("share_of_local_voice").notNull(),
+    pinsData: text("pins_data").notNull(), // JSON string array of pins
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => ({
+    businessIdx: index("geo_grid_scans_biz_idx").on(table.businessId),
+    workspaceIdx: index("geo_grid_scans_ws_idx").on(table.workspaceId),
+  })
+);
+

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Play, Edit3, Key, Loader2, Sparkles, Printer, CheckCircle2 } from "lucide-react";
+import { Play, Edit3, Key, Loader2, Sparkles, Printer, CheckCircle2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface BusinessActionBarProps {
@@ -88,6 +88,14 @@ export function BusinessActionBar({
           <span>{isGoogleConnected ? "Google Connected" : "Connect Google Account"}</span>
         </Button>
       </a>
+
+      {/* Action 4: Geo-Grid Radar */}
+      <Link href="/geo-grid">
+        <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+          <MapPin className="w-3.5 h-3.5" />
+          <span>Geo-Grid Radar</span>
+        </Button>
+      </Link>
 
       {hasLatestAudit && latestAuditId && (
         <Link href={`/reports/${latestAuditId}`} target="_blank">

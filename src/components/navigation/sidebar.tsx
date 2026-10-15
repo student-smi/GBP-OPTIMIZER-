@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Building2,
   FileSearch,
+  MapPin,
   CheckSquare,
   Sparkles,
   Printer,
@@ -60,6 +61,12 @@ export function Sidebar({ user }: SidebarProps) {
       label: "Audits",
       href: "/audits",
       icon: FileSearch,
+    },
+    {
+      label: "Geo-Grid Tracker",
+      href: "/geo-grid",
+      icon: MapPin,
+      badge: "NEW",
     },
     {
       label: "Recommendations",
