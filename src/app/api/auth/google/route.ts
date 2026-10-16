@@ -23,7 +23,8 @@ export async function GET(req: NextRequest) {
   }
 
   const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin;
-  const redirectUri = `${origin}/api/auth/callback/google`;
+  const redirectUri =
+    process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/callback/google`;
   const state = `${user.workspaceId}:${generateRandomToken(16)}`;
 
   const authUrl = buildGoogleAuthUrl(

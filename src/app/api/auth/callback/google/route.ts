@@ -34,7 +34,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const redirectUri = `${origin}/api/auth/callback/google`;
+    const redirectUri =
+      process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/callback/google`;
     const tokens = await exchangeGoogleCodeForTokens(code, {
       clientId,
       clientSecret,

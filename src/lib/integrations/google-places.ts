@@ -51,6 +51,39 @@ export async function searchGooglePlaces(
     ];
   }
 
+  // 1. Try Places API (New)
+  try {
+    const newRes = await fetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": key,
+        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.types,places.rating,places.userRatingCount",
+      },
+      body: JSON.stringify({
+        textQuery: query,
+        maxResultCount: 8,
+      }),
+    });
+
+    if (newRes.ok) {
+      const data = await newRes.json();
+      if (Array.isArray(data.places)) {
+        return data.places.map((p: any) => ({
+          placeId: p.id,
+          name: p.displayName?.text || p.id,
+          formattedAddress: p.formattedAddress || "",
+          types: p.types || [],
+          rating: p.rating,
+          userRatingsTotal: p.userRatingCount,
+        }));
+      }
+    }
+  } catch (err) {
+    console.warn("Places API (New) search failed, falling back to legacy:", err);
+  }
+
+  // 2. Fallback to Legacy Places TextSearch
   const endpoint = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(
     query
   )}&key=${key}`;
@@ -93,6 +126,40 @@ export async function getGooglePlaceDetails(
     };
   }
 
+  // 1. Try Places API (New) Details
+  try {
+    const newDetailsRes = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
+      headers: {
+        "X-Goog-Api-Key": key,
+        "X-Goog-FieldMask": "id,displayName,formattedAddress,internationalPhoneNumber,websiteUri,rating,userRatingCount,types,regularOpeningHours,photos",
+      },
+    });
+
+    if (newDetailsRes.ok) {
+      const p = await newDetailsRes.json();
+      return {
+        placeId: p.id || placeId,
+        name: p.displayName?.text || "",
+        formattedAddress: p.formattedAddress || "",
+        internationalPhoneNumber: p.internationalPhoneNumber,
+        website: p.websiteUri,
+        rating: p.rating,
+        userRatingsTotal: p.userRatingCount,
+        types: p.types || [],
+        photosCount: (p.photos || []).length,
+        openingHours: p.regularOpeningHours
+          ? {
+              weekdayText: p.regularOpeningHours.weekdayDescriptions || [],
+              openNow: p.regularOpeningHours.openNow,
+            }
+          : undefined,
+      };
+    }
+  } catch (err) {
+    console.warn("Places API (New) details failed, falling back to legacy:", err);
+  }
+
+  // 2. Fallback to Legacy Place Details
   const fields = "name,formatted_address,international_phone_number,website,rating,user_ratings_total,types,opening_hours,photos";
   const endpoint = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=${fields}&key=${key}`;
 

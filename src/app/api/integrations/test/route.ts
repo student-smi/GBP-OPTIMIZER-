@@ -52,7 +52,28 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // Live verification ping to Places API
+      // Ping Places API (New)
+      try {
+        const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": apiKey,
+            "X-Goog-FieldMask": "places.id,places.displayName",
+          },
+          body: JSON.stringify({ textQuery: "coffee", maxResultCount: 1 }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok) {
+          return NextResponse.json({
+            success: true,
+            configured: true,
+            message: "Google Places API (New) key is valid, active, and responsive!",
+          });
+        }
+      } catch (e) {}
+
+      // Fallback ping to legacy Places API
       const res = await fetch(
         `https://maps.googleapis.com/maps/api/place/textsearch/json?query=coffee&key=${apiKey}`
       );
