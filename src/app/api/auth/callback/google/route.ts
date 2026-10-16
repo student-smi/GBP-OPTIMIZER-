@@ -15,7 +15,14 @@ export async function GET(req: NextRequest) {
   const error = searchParams.get("error");
   const state = searchParams.get("state");
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin;
+  const host =
+    req.headers.get("x-forwarded-host") ||
+    req.headers.get("host") ||
+    new URL(req.url).host;
+  const proto =
+    req.headers.get("x-forwarded-proto") ||
+    (host.includes("localhost") ? "http" : "https");
+  const origin = `${proto}://${host}`;
 
   if (error || !code) {
     return NextResponse.redirect(`${origin}/settings?error=google_auth_failed`);
@@ -34,8 +41,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const redirectUri =
-      process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/callback/google`;
+    const redirectUri = `${origin}/api/auth/callback/google`;
     const tokens = await exchangeGoogleCodeForTokens(code, {
       clientId,
       clientSecret,

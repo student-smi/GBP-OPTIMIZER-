@@ -22,9 +22,15 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin;
-  const redirectUri =
-    process.env.GOOGLE_REDIRECT_URI || `${origin}/api/auth/callback/google`;
+  const host =
+    req.headers.get("x-forwarded-host") ||
+    req.headers.get("host") ||
+    new URL(req.url).host;
+  const proto =
+    req.headers.get("x-forwarded-proto") ||
+    (host.includes("localhost") ? "http" : "https");
+  const origin = `${proto}://${host}`;
+  const redirectUri = `${origin}/api/auth/callback/google`;
   const state = `${user.workspaceId}:${generateRandomToken(16)}`;
 
   const authUrl = buildGoogleAuthUrl(
